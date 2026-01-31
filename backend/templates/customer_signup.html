@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Customer Sign Up - Triple N Supermart</title>
+    <link rel="stylesheet" href="/static/css/customer_signup.css">
+</head>
+<body>
+
+<div class="signup-bg"></div>
+
+<div class="signup-container">
+    <h2>Create Your Triple N Supermart Account</h2>
+    <p class="subtitle">Get your unique Customer ID and start earning points!</p>
+
+    <form id="signupForm">
+        <input type="text" name="name" placeholder="Full Name" required>
+        <input type="text" name="phone" placeholder="Phone Number" required>
+        <input type="email" name="email" placeholder="Email Address" required>
+        <button type="submit">Create Account</button>
+    </form>
+
+    <div id="resultBox" class="result-box"></div>
+
+    <p class="login-link">
+        Already have an ID? <a href="/customer-login">Login here</a>
+    </p>
+</div>
+
+<script>
+document.getElementById("signupForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const formData = new FormData(this);
+    const resultBox = document.getElementById("resultBox");
+
+    resultBox.innerHTML = "Creating your account...";
+
+    try {
+        const res = await fetch("/customer/register", {
+            method: "POST",
+            body: formData
+        });
+
+        const data = await res.json();
+
+        if (data.error) {
+            resultBox.innerHTML = `<span style="color:red;">${data.error}</span>`;
+        } else {
+            resultBox.innerHTML = `
+                <div class="success">
+                    🎉 Account Created Successfully!<br><br>
+                    Your Customer ID is:<br>
+                    <b>${data.customer_id}</b><br><br>
+                    Please save this ID to login and track your points.
+                </div>
+            `;
+
+            // Optional auto redirect after 4 seconds
+            setTimeout(() => {
+                window.location.href = `/customer-dashboard/${data.customer_id}`;
+            }, 4000);
+        }
+
+    } catch (err) {
+        console.error(err);
+        resultBox.innerHTML = `<span style="color:red;">Server error. Please try again.</span>`;
+    }
+});
+</script>
+
+</body>
+</html>

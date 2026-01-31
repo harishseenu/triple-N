@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Admin Dashboard - Triple N Supermart</title>
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+<body>
+
+<div class="admin-bg"></div>
+
+<div class="top-bar">
+    <h2>Admin Dashboard</h2>
+    <a href="/logout" class="logout-btn">Logout</a>
+</div>
+
+<div class="admin-container">
+
+    <!-- LEFT SIDE – CREATE CUSTOMER (SMALLER) -->
+    <div class="admin-card small">
+        <h3>👤 Create Customer</h3>
+        <form id="createCustomerForm">
+            <input type="text" name="name" placeholder="Customer Name" required>
+            <input type="text" name="phone" placeholder="Phone Number" required>
+            <input type="email" name="email" placeholder="Email ID" required>
+            <button type="submit" class="btn-green">Create Customer</button>
+        </form>
+        <p id="createCustomerResult" class="result-text"></p>
+    </div>
+
+    <!-- RIGHT SIDE – ADD PURCHASE (BIGGER) -->
+    <div class="admin-card large">
+        <h3>💰 Add Purchase & Update Points</h3>
+
+        <div class="points-info">
+            💡 <b>Points Rule:</b> 1 SGD = 1 Point  
+            <br>Points are calculated automatically
+        </div>
+
+        <form id="addPurchaseForm">
+            <input type="text" name="customer_id" placeholder="Customer ID (TNM00001)" required>
+            <input type="number" name="amount" placeholder="Amount (SGD)" step="0.01" required>
+            <button type="submit" class="btn-green big-btn">Add Purchase</button>
+        </form>
+
+        <p id="purchaseResult" class="result-text"></p>
+    </div>
+
+</div>
+
+<script>
+/* Create Customer */
+document.getElementById("createCustomerForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    const res = await fetch("/admin/create-customer", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    document.getElementById("createCustomerResult").innerText =
+        data.customer_id 
+        ? `✅ Customer Created Successfully! ID: ${data.customer_id}` 
+        : `❌ ${data.error}`;
+});
+
+/* Add Purchase */
+document.getElementById("addPurchaseForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const formData = new FormData(this);
+
+    const res = await fetch("/admin/add-purchase", {
+        method: "POST",
+        body: formData
+    });
+
+    const data = await res.json();
+    document.getElementById("purchaseResult").innerText =
+        data.message 
+        ? `💰 Purchase Added! +${data.points_added} Points | Total: ${data.total_points}` 
+        : `❌ ${data.error}`;
+});
+</script>
+
+</body>
+</html>

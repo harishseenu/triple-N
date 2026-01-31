@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Customer Login - Triple N Supermart</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="login-page">
+
+<div class="login-container">
+    <h2>Customer Login</h2>
+
+    <form method="post" action="/customer-login">
+    <input 
+        type="text" 
+        name="customer_id" 
+        placeholder="Customer ID / Phone / Email" 
+        required
+    >
+
+    <input 
+        type="password" 
+        name="password" 
+        placeholder="Password" 
+        required
+    >
+
+    <button type="submit">Login</button>
+</form>
+
+
+    <a href="/">← Back to Home</a>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Customer Dashboard - Triple N Supermart</title>
+    <link rel="stylesheet" href="/static/css/customer_dashboard.css">
+</head>
+<body>
+
+<div class="dashboard-bg"></div>
+
+<div class="dashboard-container">
+    <div class="dashboard-header">
+        <h2>Customer Dashboard</h2>
+        <a href="/customer-logout" class="logout-btn">Logout</a>
+    </div>
+
+    <!-- Profile -->
+    <div class="card profile-card">
+    <div class="profile-left">
+        <div class="avatar">👤</div>
+    </div>
+    <div class="profile-right">
+        <h3>Profile</h3>
+        <div class="profile-grid">
+            <p><b>Name</b><span id="cust-name"></span></p>
+            <p><b>Customer ID</b><span id="cust-id"></span></p>
+            <p><b>Phone</b><span id="cust-phone"></span></p>
+            <p><b>Email</b><span id="cust-email"></span></p>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Points -->
+    <div class="card points-card">
+    <div class="points-icon">⭐</div>
+    <div class="points-info">
+        <h3>Reward Points</h3>
+        <div class="points-value" id="cust-points">0</div>
+        <p>Use your points to redeem exciting rewards & discounts</p>
+    </div>
+</div>
+
+
+    <!-- Purchase History -->
+    <div class="card history-card">
+    <div class="history-header">
+        <h3>🛒 Purchase History</h3>
+        <span class="history-badge">Recent Transactions</span>
+    </div>
+
+    <div class="history-list" id="purchase-table">
+        <!-- Rows will be injected by JS -->
+    </div>
+</div>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", async function () {
+    const customerId = "{{ customer_id }}";  
+
+    try {
+        const response = await fetch(`/api/customer/${customerId}`);
+        const data = await response.json();
+
+        if (data.error) {
+            alert(data.error);
+            window.location.href = "/customer-login";
+            return;
+        }
+
+        const customer = data.customer;
+
+        // Profile
+        document.getElementById("cust-name").innerText = customer.name;
+        document.getElementById("cust-id").innerText = customer.customer_id;
+        document.getElementById("cust-phone").innerText = customer.phone;
+        document.getElementById("cust-email").innerText = customer.email;
+
+        // Points
+        document.getElementById("cust-points").innerText =
+            customer.total_points + " Points";
+
+        // Purchase history
+        const history = document.getElementById("purchase-table");
+history.innerHTML = "";
+
+if (data.purchases.length === 0) {
+    history.innerHTML = `<div class="no-history">No purchases yet</div>`;
+} else {
+    data.purchases.forEach(p => {
+        const card = `
+        <div class="history-item">
+            <div class="history-left">
+                <div class="history-date">${p.date}</div>
+                <div class="history-label">Supermart Purchase</div>
+            </div>
+            <div class="history-right">
+                <div class="history-amount">SGD $${p.amount}</div>
+                <div class="history-points">+${p.points_earned} pts</div>
+            </div>
+        </div>
+        `;
+        history.innerHTML += card;
+    });
+}
+
+        }
+    
+    catch (error) {
+        alert("An error occurred while loading your dashboard.");
+        console.error(error);
+        window.location.href = "/customer-login";
+    }
+});
+</script>
+
+
+</body>
+</html>
