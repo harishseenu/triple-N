@@ -5,7 +5,7 @@ from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
 from sqlalchemy.orm import Session
 
-from backend.database import engine, SessionLocal
+from backend.database import engine, SessionLocal, Base
 from backend.models import Customer, Purchase
 
 
